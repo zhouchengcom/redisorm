@@ -37,3 +37,4 @@ class StringHash(StringType, Hash):
     def load(self, db, pk):
         return db.hget(self.pkey % pk, self.skey)
         
+        
