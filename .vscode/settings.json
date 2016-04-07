@@ -1,0 +1,10 @@
+// Place your settings in this file to overwrite default and user settings.
+{
+    "python.linting.pylintPath":"C:/Python35/Scripts/pylint.exe",
+    "python.formatting.autopep8Path":"C:/Python35/Scripts/autopep8.exe  --max-line-length=160",
+    "editor.fontFamily": "Consolas",
+    "editor.fontSize": 15,
+    "python.pythonPath":"C:/Python35/python.exe",
+    "vscode.github.taken":"da7de72ed4bad38f949353b13e02a78fb29e1e70",
+    "vscode.github.gistid":"cbda328965ce0e9a45c19d9d3c942a4e"
+}
