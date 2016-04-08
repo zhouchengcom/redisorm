@@ -3,27 +3,10 @@ from six import add_metaclass
 from schematics import models
 from .types import Hash, Field
 from .transforms import save, load
-from redis.client import BasePipeline
-
-# class FieldDescriptor(models.FieldDescriptor):
-
-#     def __init__(self, name, prefix, t):
-#         super(FieldDescriptor, self).__init__(name)
-
-#         if isinstance(t, FieldType):
-#             self.pkey = prefix + ":" + name + ":%s"
-#             self.skey = None
-#         else:
-#             self.pkey = prefix + ":%s"
-#             self.skey = name
-
-#         print(self.pkey, self.skey)
-
 
 class ModelMeta(models.ModelMeta):
 
     def __init__(cls, name, bases, attrs, **kwargs):
-        print('  Meta.__init__(cls=%s, name=%r, bases=%s, attrs=[%s], **%s)' % (cls, name, bases, ', '.join(attrs), kwargs))
         super().__init__(name, bases, attrs)
 
         for field_name, field in cls._fields.iteritems():
@@ -45,7 +28,6 @@ class Model(models.Model):
 
     def save(self, db, role=None):
         return save(self.__class__, self, db, role=role)
-        
+
     def load(self, db):
-        data = load(self.__class__, self, db)
-        
+        load(self.__class__, self, db)

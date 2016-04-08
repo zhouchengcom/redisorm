@@ -107,7 +107,7 @@ def load_loop(cls, pk, db):
 
 def load(cls, instance, db):
     data = load_loop(cls, instance.pk, db )
-    print(type(data["cc"]))
-    instance.convert(data)
+    
+    instance.import_data(data)
 
 
