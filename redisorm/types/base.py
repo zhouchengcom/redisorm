@@ -10,16 +10,15 @@ try:
 except:
     import codecs
     unicode = str #PY3
-    
-class Hash():
-    def __init__(self):
-        self.pkey = None
-        self.skey = None
-    
+        
 class Field():
     def __init__(self):
         self.pkey = None
         
+class Hash(Field):
+    def __init__(self):
+        self.pkey = None
+        self.skey = None
         
         
         
@@ -88,8 +87,6 @@ class IntegerCountField(IntType, Field):
 
 class HyperloglogField(BaseType, Field):
     def save(self, db, pk, value):
-        print(type(value), value)
-        print("ddddddddddddddddddddd")
         return db.pfadd(self.pkey % pk, *value)
     
     def load(self, db, pk):
@@ -97,8 +94,8 @@ class HyperloglogField(BaseType, Field):
         
         
 class StringHash(ByteType, Hash):
-    def save(self, db, pk, value):
-        return db.hset(self.pkey % pk, self.skey, value)
+    def save(self, db, pk, value, skey=None):
+        return db.hset(self.pkey % pk, skey or self.skey, value)
     
     def load(self, db, pk):
         return db.hget(self.pkey % pk, self.skey)

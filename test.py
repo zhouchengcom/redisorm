@@ -1,43 +1,40 @@
-from redisorm import models
-from  redisorm.types import *
 import redis
-import uuid
+import schematics
+
+import redisorm
+import redisorm.types.compound
+
+
+
+class C(redisorm.models.Model):
+    name = redisorm.types.StringHash() 
+
+class B(redisorm.models.Model):
+    name = redisorm.types.StringHash()
+    c = redisorm.types.compound.ModelType(C)
+
+
+class A(redisorm.models.Model):
+    test = redisorm.types.compound.ModelType(B)
+    aa = redisorm.types.compound.DictType(redisorm.types.StringHash)
+    bb = redisorm.types.compound.DictType(redisorm.types.StringHash)
+
+
+print(isinstance(redisorm.types.StringHash, schematics.types.BaseType))
+a = A(pk=1)
+
+
+c = C(pk=1)
+c.name =  "123123"
+xxx = B(pk=1)
+xxx.c  = c
+xxx.name = "111"
+a.test = xxx
+a.aa = {"dddd":"123123"}
+a.bb = {"dddd":"123123"}
+
 r = redis.StrictRedis("10.20.78.72")
-class Test(models.Model):
-    namespace = "xxxx"
-    aa = IntegerCountField()
-    cc = StringHash()
-    count = HyperloglogField()
+aa = A(pk=1)
 
-
-
-b = Test(1)
-# print(Test.aa)
-# for v in b.atoms():
-#     print(v)
-# print(Test(1).__dict__)
-# print (Test.aa.pkey)
-# print(b.__getattribute__("aa"))
-# print(".".join(["", "1"]))
-
-# print(Test.cc.pkey, Test.cc.skey)
-
-# b.aa = 1000
-# b.cc = "ddd"
-# print (uuid.uuid4().hex)
-b.count = [uuid.uuid4().hex]
-
-a = (uuid.uuid4().hex,)
-print(a)
-def test(b):
-    print(b)
-    
-test(*a)
-print (b.count)
-b.save(r)
-b.load(r)
-# r.incr("dfdsf", "2222")c
-
-print(b.aa)
-print(b.cc)
-print(b.count)
+a.save(db=r)
+print(aa.prefix_key)

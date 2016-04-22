@@ -8,10 +8,11 @@ class ModelMeta(models.ModelMeta):
 
     def __init__(cls, name, bases, attrs, **kwargs):
         super().__init__(name, bases, attrs)
-
+        cls.prefix_key = (name + ":%s") if "namespace" not in attrs else (attrs['namespace'] + ":" + name + ":%s")
         for field_name, field in cls._fields.iteritems():
+            print(field, Field)
             if isinstance(field, Field):
-                prefix = (name + ":" + field_name + ":%s") if "namespace" not in attrs else (attrs['namespace'] + ":" + name + ":" + field_name + ":%s")
+                prefix = (name + ":%s:" + field_name) if "namespace" not in attrs else (attrs['namespace'] + ":" + name + ":%s:" + field_name)
                 field.pkey = prefix
             if isinstance(field, Hash):
                 prefix = (name + ":%s") if "namespace" not in attrs else (attrs['namespace'] + ":" + name + ":%s")
@@ -26,8 +27,11 @@ class Model(models.Model):
         super(Model, self).__init__(raw_data, deserialize_mapping, strict)
         self.pk = pk
 
-    def save(self, db, role=None):
-        return save(self.__class__, self, db, role=role)
+    def save(self, db):
+        return save(self.__class__, self, db, self.pk)
 
     def load(self, db):
         load(self.__class__, self, db)
+
+
+      

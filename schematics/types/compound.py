@@ -120,7 +120,7 @@ class ModelType(MultiType):
 class ListType(MultiType):
 
     def __init__(self, field, min_size=None, max_size=None, **kwargs):
-
+        
         if not isinstance(field, BaseType):
             compound_field = kwargs.pop('compound_field', None)
             field = self.init_compound_field(field, compound_field, **kwargs)
@@ -220,6 +220,8 @@ class ListType(MultiType):
 class DictType(MultiType):
 
     def __init__(self, field, coerce_key=None, **kwargs):
+        print(type(field))
+        print(isinstance(field, BaseType))
         if not isinstance(field, BaseType):
             compound_field = kwargs.pop('compound_field', None)
             field = self.init_compound_field(field, compound_field, **kwargs)
