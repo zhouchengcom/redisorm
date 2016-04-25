@@ -11,13 +11,13 @@ class C(redisorm.models.Model):
 
 class B(redisorm.models.Model):
     name = redisorm.types.StringHash()
-    c = redisorm.types.compound.ModelType(C)
+    # c = redisorm.types.compound.ModelType(C)
 
 
 class A(redisorm.models.Model):
     test = redisorm.types.compound.ModelType(B)
-    aa = redisorm.types.compound.DictType(redisorm.types.StringHash)
-    bb = redisorm.types.compound.DictType(redisorm.types.StringHash)
+    # aa = redisorm.types.compound.DictType(redisorm.types.StringHash)
+    # bb = redisorm.types.compound.DictType(redisorm.types.StringHash)
 
 
 print(isinstance(redisorm.types.StringHash, schematics.types.BaseType))
@@ -38,3 +38,9 @@ aa = A(pk=1)
 
 a.save(db=r)
 print(aa.prefix_key)
+
+
+c= A(pk=1)
+c.load(db=r)
+print (c.test.name)
+

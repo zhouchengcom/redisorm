@@ -28,23 +28,31 @@ def save_loop(cls, instance, db, pk):
         else:
             shaped = field.to_primitive(value)
             field.save(db, pk, shaped)
-    
-    return cls.prefix_key % pk
-   
+
+    return pk
 
 
-def load_loop(cls, pk, db):
-    pipe = isinstance(db, BasePipeline)
+def load_loop(cls, instance, pk, db):
     data = {}
 
     for field_name, field in iteritems(cls._fields):
-        value = field.load(db, pk)
-        data[field_name] = (len(value) - 1) if pipe else value
+        if hasattr(field, "load_loop"):
+            if isinstance(field, ModelType):
+                value = db.hget(cls.prefix_key % pk, field_name)
+                if value:
+                    value = value.decode(encoding='UTF-8')
+                    data[field_name] = field.load_loop(None, value, db)
+            else:
+                data[field_name] = field.load_loop(None, pk, db)
+        else:
+            data[field_name] = field.load(pk, db)
 
     return data
 
 
-def load(cls, instance, db):
-    data = load_loop(cls, instance.pk, db)
+def load(cls, instance, pk, db):
+    data = load_loop(cls, instance, pk, db)
+    instance._data.update(data)
 
-    instance.import_data(data)
+
+from .types.compound import ModelType

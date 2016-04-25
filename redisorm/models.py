@@ -31,7 +31,7 @@ class Model(models.Model):
         return save(self.__class__, self, db, self.pk)
 
     def load(self, db):
-        load(self.__class__, self, db)
+        load(self.__class__, self, self.pk, db)
 
 
       
