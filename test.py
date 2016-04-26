@@ -16,8 +16,8 @@ class B(redisorm.models.Model):
 
 class A(redisorm.models.Model):
     test = redisorm.types.compound.ModelType(B)
-    # aa = redisorm.types.compound.DictType(redisorm.types.StringHash)
-    # bb = redisorm.types.compound.DictType(redisorm.types.StringHash)
+    aa = redisorm.types.compound.DictType(redisorm.types.StringHash)
+    bb = redisorm.types.compound.DictType(redisorm.types.StringHash)
 
 
 print(isinstance(redisorm.types.StringHash, schematics.types.BaseType))
@@ -37,10 +37,13 @@ r = redis.StrictRedis("10.20.78.72")
 aa = A(pk=1)
 
 a.save(db=r)
-print(aa.prefix_key)
-
-
+import sys
+print(sys.version)
 c= A(pk=1)
-c.load(db=r)
-print (c.test.name)
-
+p=  r.pipeline()
+c.load(p)
+result = p.execute()
+c.load_pipe_result(result)
+# c.save(r)
+print (c.aa)
+print(c.test.name)

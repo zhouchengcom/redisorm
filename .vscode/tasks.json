@@ -12,6 +12,7 @@
 	
     "version": "0.1.0",
     "command": "c:\\Python35\\python.exe",
+	// "command": "c:\\Python27_32\\python.exe",
     "args": ["${file}"],
    
     "showOutput":"always"

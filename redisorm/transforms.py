@@ -8,6 +8,7 @@ from schematics.exceptions import ModelConversionError, ConversionError
 from redis.client import BasePipeline
 
 
+
 def save(cls, instance, db, pk):
 
     data = save_loop(cls, instance, db, pk)
@@ -45,14 +46,39 @@ def load_loop(cls, instance, pk, db):
             else:
                 data[field_name] = field.load_loop(None, pk, db)
         else:
-            data[field_name] = field.load(pk, db)
+            value = field.load(db, pk)
+            value = field.to_native(value)
+            data[field_name] = value
 
     return data
 
 
 def load(cls, instance, pk, db):
-    data = load_loop(cls, instance, pk, db)
+    if isinstance(db, BasePipeline):
+        data = pipe_load_loop(cls, instance, pk, db)
+    else:
+        data = load_loop(cls, instance, pk, db)
+        
     instance._data.update(data)
+        
+
+
+
+def pipe_load_loop(cls, instance, pk, db):
+    data = {}
+
+    for field_name, field in iteritems(cls._fields):
+        if hasattr(field, "load_loop"):
+            if isinstance(field, ModelType):
+                data[field_name] = len(db.hget(cls.prefix_key % pk, field_name))
+            else:
+                data[field_name] = field.pipe_load_loop(None, pk, db)
+        else:
+            data[field_name] = len(field.load(db, pk))
+
+    return data
+
+
 
 
 from .types.compound import ModelType

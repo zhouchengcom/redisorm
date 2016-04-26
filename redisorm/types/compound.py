@@ -2,6 +2,13 @@ from schematics.types import compound
 from .base import Field
 from six import iteritems
 from ..transforms import save_loop
+from six import PY2, PY3,  text_type as unicode
+
+
+if PY2:
+    b2s = lambda v: v
+elif PY3:
+    b2s = lambda v: unicode(v, "utf-8")
 
 
 class DictType(compound.DictType, Field):
@@ -20,8 +27,13 @@ class DictType(compound.DictType, Field):
     def load_loop(self, instance, pk, db):
         values = db.hgetall(self.pkey % pk)
         if values:
-            data = {k: self.field.to_native(v) for k, v in iteritems(values)}
+            data = {self.coerce_key(k, "utf-8"): self.field.to_native(v) for k, v in iteritems(values)}
             return data
+            
+            
+    def pipe_load_loop(self, instance, pk, db):
+        return len(db.hgetall(self.pkey % pk))
+         
 
 
 class ModelType(compound.ModelType, Field):
