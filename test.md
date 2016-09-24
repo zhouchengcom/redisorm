@@ -24,7 +24,7 @@ this test contains:
 |/about/|43|0|31.0|32.5813953488|20.0|80.0||
 |/|43|0|20.0|19.2325581395|9.0|29.0||
 
-![](https://raw.githubusercontent.com/zhouchengcom/redisorm/master/total_request_respond.svg)
+![](total_request_respond.svg)
 
   
 
@@ -36,8 +36,8 @@ The number of failureful request Per Second (SPPS) over Concurrent Users (CUs).
 
 #### request:/about/
 
-![](request_L2Fib3V0Lw==_count.svg?raw=true)
-![](request_L2Fib3V0Lw==_respond.svg?raw=true)
+![](request_L2Fib3V0Lw==_count.jpg)
+![](request_L2Fib3V0Lw==_respond.jpg)
 
 |Total        | Failure           |Median|Average| Min  |Max|TP50|TP75|TP90|TP99|
 | --- |---| ---| --- |---| ---|----|---|---|---|---|
@@ -48,8 +48,8 @@ The number of failureful request Per Second (SPPS) over Concurrent Users (CUs).
 
 #### request:/
 
-![](request_Lw==_count.svg?raw=true)
-![](request_Lw==_respond.svg?raw=true)
+![](request_Lw==_count.jpg)
+![](request_Lw==_respond.jpg)
 
 |Total        | Failure           |Median|Average| Min  |Max|TP50|TP75|TP90|TP99|
 | --- |---| ---| --- |---| ---|----|---|---|---|---|
