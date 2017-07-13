@@ -1,7 +1,6 @@
-
 from six import iteritems
 
-from schematics.transforms import wholelist, atoms, allow_none, sort_dict, _list_or_string
+from schematics.transforms import wholelist, atoms
 from schematics.exceptions import ModelConversionError, ConversionError
 
 from schematics.types.serializable import Serializable
@@ -24,7 +23,7 @@ def save_loop(cls, instance, db, pk):
             continue
 
         if hasattr(field, 'save_loop'):
-            shaped = field.save_loop(value, db, pk)
+            shaped = field.save_loop(value, pk, db)
             if shaped:
                 db.hset(cls.prefix_key % pk, field_name, shaped)
         else:

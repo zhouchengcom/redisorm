@@ -13,7 +13,7 @@ elif PY3:
 
 class DictType(compound.DictType, Field):
 
-    def save_loop(self, instance, db, pk):
+    def save_loop(self, instance, pk, db):
         for key, value in iteritems(instance):
             if hasattr(self.field, 'save_loop'):
                 shaped = self.field.save_loop(value)
@@ -50,11 +50,11 @@ class DictType(compound.DictType, Field):
 
 class SetType(compound.ListType, Field):
 
-    def save_loop(self, instance, db, pk):
+    def save_loop(self, instance, pk, db):
         values = set()
         for value in instance:
             if hasattr(self.field, 'save_loop'):
-                shaped = self.field.save_loop(value, db, pk)
+                shaped = self.field.save_loop(value, pk, db)
                 if shaped:
                     values.add(shaped)
             else:
@@ -69,7 +69,7 @@ class SetType(compound.ListType, Field):
         values = db.smembers(self.pkey % pk)
         if values:
             if hasattr(self.field, 'load_loop'):
-                return set([self.field.load_loop(None, db, v) for v in values])
+                return set([self.field.load_loop(None, v, db) for v in values])
             else:
                 return set([self.field.to_native(v) for v in values])
 
@@ -93,11 +93,11 @@ class SetType(compound.ListType, Field):
 
 class ListType(compound.ListType, Field):
 
-    def save_loop(self, instance, db, pk):
+    def save_loop(self, instance, pk, db):
         values = []
         for value in instance:
             if hasattr(self.field, 'save_loop'):
-                shaped = self.field.save_loop(value, db, pk)
+                shaped = self.field.save_loop(value, pk, db)
                 if shaped:
                     values.append(shaped)
             else:
@@ -112,7 +112,7 @@ class ListType(compound.ListType, Field):
         values = db.lrange(self.pkey % pk, 0, -1)
         if values:
             if hasattr(self.field, 'load_loop'):
-                return [self.field.load_loop(None, db, v) for v in values]
+                return [self.field.load_loop(None, v, db) for v in values]
             else:
                 return [self.field.to_native(v) for v in values]
 
@@ -136,7 +136,7 @@ class ListType(compound.ListType, Field):
 
 class ModelType(compound.ModelType, Field):
 
-    def save_loop(self, model_instance, db, pk):
+    def save_loop(self, model_instance, pk, db):
         """
         Calls the main `export_loop` implementation because they are both
         supposed to operate on models.
@@ -149,7 +149,7 @@ class ModelType(compound.ModelType, Field):
         shaped = save_loop(model_class, model_instance, db, model_instance.pk)
         return shaped
 
-    def load_loop(self, instance, db, pk):
+    def load_loop(self, instance, pk, db):
         model = instance if instance else self.model_class(pk)
         model.load(db)
         return model

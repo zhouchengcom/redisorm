@@ -55,6 +55,9 @@ class Model(models.Model):
         for field_name, field in iteritems(self._fields):
             if field_name not in data:
                 continue
+            
+            if data[field_name] is None:
+                self._data[field_name] = None
 
             if hasattr(field, "load_pipe_result"):
                 value = field.load_pipe_result(data[field_name])
